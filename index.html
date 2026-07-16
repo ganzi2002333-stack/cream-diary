@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="theme-color" content="#FFFAF0">
+  <meta name="description" content="奶油日记 - 用温柔的方式记录每一天的情绪">
+  <title>🍰 奶油日记</title>
+
+  <!-- 外部依赖 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+
+  <!-- 项目样式 -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Apple Touch Icon (临时占位，后续替换为真实图标) -->
+  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+</head>
+<body>
+
+  <!-- ========== 应用容器 ========== -->
+  <div class="app-container" id="appContainer">
+
+    <!-- ========== 顶部标题栏 ========== -->
+    <header class="app-header" id="appHeader">
+      <h1 class="page-title" id="pageTitle">🍰 今天的心情</h1>
+    </header>
+
+    <!-- ========== 主内容区 ========== -->
+    <main class="app-main" id="appMain">
+
+      <!-- =============================================================== -->
+      <!-- Panel 1: 今天 - 情绪记录页 -->
+      <!-- =============================================================== -->
+      <section class="panel active" id="panel-today">
+        <div class="panel-content">
+
+          <!-- 日期显示 -->
+          <div class="date-display">
+            <span class="date-icon">📅</span>
+            <span class="date-text" id="todayDate">2026年6月19日 星期五</span>
+          </div>
+
+          <!-- 情绪打分卡片 -->
+          <div class="card mood-card">
+            <div class="card-label">💛 今天的心情指数</div>
+            <div class="score-display" id="scoreDisplay">5.0</div>
+            <div class="mood-emoji" id="moodEmoji">😐</div>
+            <div class="slider-container">
+              <span class="slider-label-left">😔 很糟糕</span>
+              <input type="range" class="mood-slider" id="moodSlider"
+                     min="1" max="10" step="0.1" value="5.0">
+              <span class="slider-label-right">😊 很棒</span>
+            </div>
+            <div class="score-steps">
+              <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+              <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+            </div>
+          </div>
+
+          <!-- 标签选择卡片 -->
+          <div class="card tags-card">
+            <div class="card-label">🏷️ 今天的情绪标签</div>
+            <div class="tags-container" id="tagsContainer">
+              <!-- JS 动态填充预设标签 -->
+            </div>
+            <button class="btn-add-tag" id="btnAddTag">＋ 新建标签</button>
+          </div>
+
+          <!-- 每日三问 -->
+          <div class="card questions-card">
+            <div class="card-label">💭 每日三问</div>
+
+            <!-- 第1问 -->
+            <div class="question-block">
+              <div class="question-title">① 今天发生了什么？</div>
+              <textarea class="question-input" id="q1Input"
+                        placeholder="写下今天发生的事情…" rows="3"></textarea>
+            </div>
+
+            <!-- 第2问 -->
+            <div class="question-block">
+              <div class="question-title">② 我今天最明显的感受是什么？</div>
+              <textarea class="question-input" id="q2Input"
+                        placeholder="描述你此刻最强烈的感受…" rows="3"></textarea>
+            </div>
+
+            <!-- 第3问 -->
+            <div class="question-block">
+              <div class="question-title">③ 这件事反映了我什么需求？</div>
+              <textarea class="question-input" id="q3Input"
+                        placeholder="试着探索情绪背后的需求…" rows="3"></textarea>
+            </div>
+          </div>
+
+          <!-- 保存按钮 -->
+          <button class="btn-save" id="btnSave">💛 记录今日心情</button>
+
+          <!-- 底部留白 -->
+          <div class="bottom-spacer"></div>
+
+        </div>
+      </section>
+
+      <!-- =============================================================== -->
+      <!-- Panel 2: 历史 - 历史记录页 -->
+      <!-- =============================================================== -->
+      <section class="panel" id="panel-history">
+        <div class="panel-content">
+
+          <!-- 时间筛选 -->
+          <div class="filter-bar">
+            <button class="filter-chip active" data-period="all">全部</button>
+            <button class="filter-chip" data-period="week">本周</button>
+            <button class="filter-chip" data-period="month">本月</button>
+          </div>
+
+          <!-- 记录列表 -->
+          <div class="history-list" id="historyList">
+            <!-- 空状态 -->
+            <div class="empty-state" id="historyEmpty">
+              <div class="empty-icon">📭</div>
+              <div class="empty-text">还没有情绪记录哦~</div>
+              <div class="empty-hint">去"今天"页面开始记录吧</div>
+            </div>
+          </div>
+
+          <div class="bottom-spacer"></div>
+        </div>
+      </section>
+
+      <!-- =============================================================== -->
+      <!-- Panel 3: 趋势 - 情绪趋势页 -->
+      <!-- =============================================================== -->
+      <section class="panel" id="panel-trends">
+        <div class="panel-content">
+
+          <!-- 时间维度切换 -->
+          <div class="chart-toggle">
+            <button class="toggle-btn active" data-view="week">📊 本周</button>
+            <button class="toggle-btn" data-view="month">📈 本月</button>
+          </div>
+
+          <!-- 平均分卡片 -->
+          <div class="stat-row">
+            <div class="stat-card">
+              <div class="stat-value" id="avgScore">--</div>
+              <div class="stat-label">平均分</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="maxScore">--</div>
+              <div class="stat-label">最高分</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="minScore">--</div>
+              <div class="stat-label">最低分</div>
+            </div>
+          </div>
+
+          <!-- 折线图 -->
+          <div class="card chart-card">
+            <div class="chart-wrapper">
+              <canvas id="moodChart"></canvas>
+            </div>
+          </div>
+
+          <!-- 空状态 -->
+          <div class="empty-state" id="trendsEmpty" style="display:none;">
+            <div class="empty-icon">📊</div>
+            <div class="empty-text">数据还不够哦~</div>
+            <div class="empty-hint">至少需要2天的记录才能生成趋势图</div>
+          </div>
+
+          <div class="bottom-spacer"></div>
+        </div>
+      </section>
+
+      <!-- =============================================================== -->
+      <!-- Panel 4: 搜索 - 搜索筛选页 -->
+      <!-- =============================================================== -->
+      <section class="panel" id="panel-search">
+        <div class="panel-content">
+
+          <!-- 关键词搜索 -->
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="searchKeyword"
+                   placeholder="搜索关键词…">
+          </div>
+
+          <!-- 筛选面板 -->
+          <div class="card filter-card">
+            <div class="filter-section">
+              <div class="filter-label">📅 日期范围</div>
+              <div class="date-range">
+                <input type="date" class="date-input" id="dateFrom">
+                <span class="date-sep">至</span>
+                <input type="date" class="date-input" id="dateTo">
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <div class="filter-label">😊 情绪分数</div>
+              <div class="score-range">
+                <input type="number" class="score-input" id="scoreMin"
+                       placeholder="最低" min="1" max="10">
+                <span class="date-sep">-</span>
+                <input type="number" class="score-input" id="scoreMax"
+                       placeholder="最高" min="1" max="10">
+              </div>
+            </div>
+
+            <div class="filter-section">
+              <div class="filter-label">🏷️ 标签筛选</div>
+              <div class="tags-container" id="searchTagsContainer">
+                <!-- JS 动态填充 -->
+              </div>
+            </div>
+
+            <button class="btn-reset" id="btnResetFilter">重置筛选</button>
+          </div>
+
+          <!-- 搜索结果 -->
+          <div class="search-results" id="searchResults">
+            <div class="empty-state" id="searchEmpty">
+              <div class="empty-icon">🔎</div>
+              <div class="empty-text">输入关键词或选择筛选条件</div>
+              <div class="empty-hint">可以搜索日记内容、按日期和分数筛选</div>
+            </div>
+          </div>
+
+          <div class="bottom-spacer"></div>
+        </div>
+      </section>
+
+      <!-- =============================================================== -->
+      <!-- Panel 4.5: 猫伴 - AI 聊天面板 -->
+      <!-- =============================================================== -->
+      <section class="panel" id="panel-cat">
+        <div class="panel-content" style="display:flex;flex-direction:column;height:100%;padding-bottom:0;">
+
+          <!-- 会话选择器 -->
+          <div class="chat-session-header">
+            <select class="chat-session-select" id="chatSessionSelect">
+              <option value="">🐱 选择会话…</option>
+            </select>
+            <button class="btn-new-chat" id="btnNewChat" title="新建对话">＋</button>
+            <button class="btn-delete-chat" id="btnDeleteChat" title="删除会话">🗑️</button>
+          </div>
+
+          <!-- 消息搜索 -->
+          <div class="chat-search-box">
+            <span style="font-size:14px;">🔍</span>
+            <input type="text" class="chat-search-input" id="chatSearchInput"
+                   placeholder="在对话中搜索关键词…">
+            <span class="chat-search-clear" id="chatSearchClear">✕</span>
+          </div>
+
+          <!-- 消息列表 -->
+          <div class="chat-messages" id="chatMessages">
+            <!-- 空状态 -->
+            <div class="chat-empty" id="chatEmpty">
+              <div class="chat-empty-icon">🐱</div>
+              <div class="chat-empty-text">喵~ 我是你的AI猫伴</div>
+              <div class="chat-empty-hint">可以和我聊聊你的心情、今天的趣事，或者任何你想说的话~</div>
+              <div class="chat-empty-suggestions">
+                <span class="chat-suggestion-chip" data-text="我今天心情不太好，可以安慰我一下吗？">😔 我今天心情不太好…</span>
+                <span class="chat-suggestion-chip" data-text="帮我分析一下最近的日记，看看我的情绪趋势">📊 帮我分析日记情绪</span>
+                <span class="chat-suggestion-chip" data-text="讲一个关于小猫咪的有趣故事给我听">🐈 讲个猫咪故事</span>
+                <span class="chat-suggestion-chip" data-text="我最近总是很焦虑，有什么方法可以缓解？">💡 缓解焦虑的方法</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 输入栏 -->
+          <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput"
+                   placeholder="输入消息…" maxlength="2000">
+            <button class="btn-send" id="btnSend" disabled>▶</button>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =============================================================== -->
+      <!-- Panel 5: 设置 - 设置页 -->
+      <!-- =============================================================== -->
+      <section class="panel" id="panel-settings">
+        <div class="panel-content">
+
+          <!-- 提醒设置 -->
+          <div class="card settings-card">
+            <div class="settings-item">
+              <div class="settings-info">
+                <div class="settings-label">⏰ 每日提醒</div>
+                <div class="settings-desc">到时间会弹出通知提醒你记录心情</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="reminderToggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <div class="settings-item" id="reminderTimeRow">
+              <div class="settings-info">
+                <div class="settings-label">提醒时间</div>
+                <div class="settings-desc">每天提醒的时间点</div>
+              </div>
+              <input type="time" class="time-input" id="reminderTime" value="21:00">
+            </div>
+          </div>
+
+          <!-- 数据管理 -->
+          <div class="card settings-card">
+            <div class="settings-item clickable" id="btnExport">
+              <div class="settings-info">
+                <div class="settings-label">📤 导出数据</div>
+                <div class="settings-desc">将所有记录导出为 JSON 文件备份</div>
+              </div>
+              <span class="settings-arrow">›</span>
+            </div>
+
+            <div class="settings-item clickable" id="btnImport">
+              <div class="settings-info">
+                <div class="settings-label">📥 导入数据</div>
+                <div class="settings-desc">从之前导出的 JSON 文件恢复数据</div>
+              </div>
+              <span class="settings-arrow">›</span>
+            </div>
+          </div>
+
+          <!-- AI 猫伴配置 -->
+          <div class="card settings-card">
+            <div class="settings-item">
+              <div class="settings-info">
+                <div class="settings-label">🐱 AI 猫伴</div>
+                <div class="settings-desc">配置 AI 聊天接口</div>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="aiChatToggle" checked>
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="settings-item" id="aiProviderRow" style="flex-direction:column;align-items:stretch;">
+              <div class="settings-info" style="margin-bottom:8px;">
+                <div class="settings-label">API 提供商</div>
+                <div class="settings-desc">选择 AI 接口（OpenAI兼容即可）</div>
+              </div>
+              <select id="aiProvider" class="chat-session-select" style="width:100%;">
+                <option value="openai">OpenAI (GPT-4o-mini)</option>
+                <option value="custom">自定义兼容接口</option>
+              </select>
+            </div>
+            <div class="settings-item" id="aiEndpointRow" style="flex-direction:column;align-items:stretch;">
+              <div class="settings-info" style="margin-bottom:8px;">
+                <div class="settings-label">API 地址</div>
+                <div class="settings-desc">OpenAI 兼容的 API 端点</div>
+              </div>
+              <input type="text" class="api-input" id="aiEndpoint"
+                     placeholder="https://api.openai.com/v1/chat/completions">
+            </div>
+            <div class="settings-item" id="aiKeyRow" style="flex-direction:column;align-items:stretch;">
+              <div class="settings-info" style="margin-bottom:8px;">
+                <div class="settings-label">API Key</div>
+                <div class="settings-desc">你的 API 密钥（仅存本地）</div>
+              </div>
+              <input type="password" class="api-input" id="aiApiKey"
+                     placeholder="sk-…">
+            </div>
+            <div class="settings-item" id="aiModelRow" style="flex-direction:column;align-items:stretch;">
+              <div class="settings-info" style="margin-bottom:8px;">
+                <div class="settings-label">模型名称</div>
+                <div class="settings-desc">例如 gpt-4o-mini, deepseek-chat</div>
+              </div>
+              <input type="text" class="api-input" id="aiModel"
+                     placeholder="gpt-4o-mini">
+            </div>
+            <div class="settings-item" id="aiSystemPromptRow" style="flex-direction:column;align-items:stretch;">
+              <div class="settings-info" style="margin-bottom:8px;">
+                <div class="settings-label">系统提示词</div>
+                <div class="settings-desc">定义猫伴的性格和说话风格</div>
+              </div>
+              <textarea class="api-input" id="aiSystemPrompt" rows="3"
+                        style="resize:vertical;min-height:60px;"></textarea>
+            </div>
+          </div>
+
+          <!-- 关于 -->
+          <div class="card settings-card">
+            <div class="settings-item">
+              <div class="settings-info">
+                <div class="settings-label">🍰 奶油日记</div>
+                <div class="settings-desc">版本 v2.0 · 猫猫风格 · 用心记录每一天</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bottom-spacer"></div>
+        </div>
+      </section>
+
+    </main>
+
+      <!-- ========== 底部导航栏 ========== -->
+      <nav class="bottom-nav" id="bottomNav">
+        <button class="nav-item active" data-panel="panel-today">
+          <span class="nav-icon">🏠</span>
+          <span class="nav-label">今天</span>
+        </button>
+        <button class="nav-item" data-panel="panel-history">
+          <span class="nav-icon">📅</span>
+          <span class="nav-label">历史</span>
+        </button>
+        <button class="nav-item" data-panel="panel-trends">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">趋势</span>
+        </button>
+        <button class="nav-item" data-panel="panel-cat">
+          <span class="nav-icon">🐱</span>
+          <span class="nav-label">猫伴</span>
+        </button>
+        <button class="nav-item" data-panel="panel-search">
+          <span class="nav-icon">🔍</span>
+          <span class="nav-label">搜索</span>
+        </button>
+        <button class="nav-item" data-panel="panel-settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">设置</span>
+        </button>
+      </nav>
+
+    <!-- ========== Toast 提示 ========== -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ========== 模态框（创建标签等） ========== -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box" id="modalBox">
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-body" id="modalBody"></div>
+        <div class="modal-actions" id="modalActions"></div>
+      </div>
+    </div>
+
+    <!-- ========== 隐藏的文件导入框 ========== -->
+    <input type="file" id="importFileInput" accept=".json" style="display:none;">
+
+  </div>
+
+  <!-- ========== 注册 Service Worker ========== -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log('✅ SW registered'))
+        .catch(err => console.log('SW registration failed:', err));
+    }
+  </script>
+
+  <!-- ========== 项目 JS ========== -->
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/chat.js"></script>
+
+</body>
+</html>

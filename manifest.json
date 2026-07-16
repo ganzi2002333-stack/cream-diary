@@ -1,0 +1,28 @@
+{
+  "name": "奶油日记",
+  "short_name": "奶油日记",
+  "description": "用温柔的方式记录每一天的情绪",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FFFAF0",
+  "theme_color": "#FFFAF0",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["lifestyle", "health"],
+  "display_override": ["standalone", "minimal-ui"],
+  "prefer_related_applications": false
+}
