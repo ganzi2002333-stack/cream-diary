@@ -271,7 +271,7 @@ button {
 }
 
 /* ---------- Mood Slider ---------- */
-.mood-card { text-align: center; }
+.mood-card { text-align: center; background: #FFFFFF; }
 
 .score-display {
   font-size: 48px;
