@@ -172,7 +172,7 @@
   // ============================================================
   function getAIConfig() {
     const config = loadConfig();
-    const provider = els.aiProvider ? els.aiProvider.value : (config.provider || 'openai');
+    const provider = els.aiProvider ? els.aiProvider.value : (config.provider || 'deepseek');
     const enabled = els.aiToggle ? els.aiToggle.checked : (config.enabled !== false);
 
     let endpoint, apiKey, model;
@@ -180,9 +180,12 @@
     if (provider === 'openai') {
       endpoint = 'https://api.openai.com/v1/chat/completions';
       model = 'gpt-4o-mini';
+    } else if (provider === 'deepseek') {
+      endpoint = 'https://api.deepseek.com/v1/chat/completions';
+      model = 'deepseek-chat';
     } else {
       endpoint = els.aiEndpoint ? els.aiEndpoint.value.trim() : (config.endpoint || '');
-      model = els.aiModel ? els.aiModel.value.trim() : (config.model || 'gpt-4o-mini');
+      model = els.aiModel ? els.aiModel.value.trim() : (config.model || 'deepseek-chat');
     }
 
     apiKey = els.aiApiKey ? els.aiApiKey.value.trim() : (config.apiKey || '');
@@ -196,7 +199,7 @@
     if (!els.aiToggle) return;
 
     els.aiToggle.checked = config.enabled !== false;
-    els.aiProvider.value = config.provider || 'openai';
+    els.aiProvider.value = config.provider || 'deepseek';
     els.aiEndpoint.value = config.endpoint || '';
     els.aiApiKey.value = config.apiKey || '';
     els.aiModel.value = config.model || '';
@@ -223,7 +226,7 @@
   function saveCurrentConfig() {
     const config = {
       enabled: els.aiToggle ? els.aiToggle.checked : true,
-      provider: els.aiProvider ? els.aiProvider.value : 'openai',
+      provider: els.aiProvider ? els.aiProvider.value : 'deepseek',
       endpoint: els.aiEndpoint ? els.aiEndpoint.value.trim() : '',
       apiKey: els.aiApiKey ? els.aiApiKey.value.trim() : '',
       model: els.aiModel ? els.aiModel.value.trim() : '',
@@ -278,19 +281,20 @@
 
       if (msg.role === 'user') {
         html += `
-          <div class="chat-message chat-message-user">
-            <div class="chat-bubble chat-bubble-user">
+          <div class="chat-msg user">
+            <div class="chat-avatar">😺</div>
+            <div class="chat-bubble">
               <div class="chat-bubble-text">${content}</div>
-              <div class="chat-bubble-time">${time}</div>
+              <div class="chat-time">${time}</div>
             </div>
           </div>`;
       } else {
         html += `
-          <div class="chat-message chat-message-ai">
+          <div class="chat-msg assistant">
             <div class="chat-avatar">🐱</div>
-            <div class="chat-bubble chat-bubble-ai">
+            <div class="chat-bubble">
               <div class="chat-bubble-text">${content}</div>
-              <div class="chat-bubble-time">${time}</div>
+              <div class="chat-time">${time}</div>
             </div>
           </div>`;
       }
@@ -299,14 +303,12 @@
     // 流式输出中的临时气泡
     if (isStreaming && activeSessionId) {
       html += `
-        <div class="chat-message chat-message-ai" id="streamingBubble">
+        <div class="chat-msg assistant chat-typing" id="streamingBubble">
           <div class="chat-avatar">🐱</div>
-          <div class="chat-bubble chat-bubble-ai">
-            <div class="chat-bubble-text">
-              <span class="typing-indicator">
-                <span></span><span></span><span></span>
-              </span>
-            </div>
+          <div class="chat-bubble">
+            <span class="chat-typing-dot"></span>
+            <span class="chat-typing-dot"></span>
+            <span class="chat-typing-dot"></span>
           </div>
         </div>`;
     }
@@ -335,7 +337,7 @@
       els.chatEmpty.style.display = '';
       if (els.messages.children.length <= 1) {
         // 只保留空状态元素
-        els.messages.querySelectorAll('.chat-message').forEach(el => el.remove());
+        els.messages.querySelectorAll('.chat-msg').forEach(el => el.remove());
       }
     } else {
       els.chatEmpty.style.display = 'none';
@@ -687,16 +689,19 @@
 
     els.aiProvider.addEventListener('change', () => {
       toggleAISettingsRows();
-      
+
       // 切换 provider 时自动填充默认值
-      if (els.aiProvider.value === 'openai') {
+      if (els.aiProvider.value === 'deepseek') {
+        if (els.aiEndpoint) els.aiEndpoint.value = 'https://api.deepseek.com/v1/chat/completions';
+        if (els.aiModel) els.aiModel.value = 'deepseek-chat';
+      } else if (els.aiProvider.value === 'openai') {
         if (els.aiEndpoint) els.aiEndpoint.value = 'https://api.openai.com/v1/chat/completions';
         if (els.aiModel) els.aiModel.value = 'gpt-4o-mini';
       } else {
         if (els.aiEndpoint) els.aiEndpoint.value = '';
         if (els.aiModel) els.aiModel.value = '';
       }
-      
+
       saveCurrentConfig();
     });
 
