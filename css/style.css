@@ -283,24 +283,42 @@ button {
 }
 
 .mood-emoji {
-  margin-bottom: var(--spacing-lg);
-  transition: transform 200ms ease;
-  text-align: center;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto var(--spacing-lg) auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(255,182,193,0.12) 0%, transparent 70%);
+  border-radius: 50%;
+  transition: transform 250ms ease;
+}
+
+.mood-emoji:active {
+  transform: scale(1.08);
 }
 
 .mood-img {
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   object-fit: contain;
   image-rendering: auto;
+  /* 猫猫轻微浮动动画 */
+  animation: moodCatFloat 3s ease-in-out infinite;
+}
+
+@keyframes moodCatFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 
 /* 历史/搜索结果卡片中的小号表情 */
 .history-card-score .mood-img,
 .search-result-card .mood-img {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   vertical-align: middle;
+  animation: none;
 }
 
 /* 滑动条 */
