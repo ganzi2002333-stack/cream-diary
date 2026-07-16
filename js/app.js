@@ -189,16 +189,17 @@
   const moodEmoji = document.getElementById('moodEmoji');
 
   function getMoodEmoji(score) {
-    if (score <= 1.5) return '😭';
-    if (score <= 2.5) return '😢';
-    if (score <= 3.5) return '😔';
-    if (score <= 4.5) return '😕';
-    if (score <= 5.5) return '😐';
-    if (score <= 6.5) return '🙂';
-    if (score <= 7.5) return '😊';
-    if (score <= 8.5) return '😄';
-    if (score <= 9.5) return '🥳';
-    return '🌟';
+    var img = '<img src="assets/icons/';
+    if (score <= 1.5) return img + '难过.png" alt="难过" class="mood-img">';
+    if (score <= 2.5) return img + '累.png" alt="累" class="mood-img">';
+    if (score <= 3.5) return img + '生气.png" alt="生气" class="mood-img">';
+    if (score <= 4.5) return img + '电量耗尽.png" alt="电量耗尽" class="mood-img">';
+    if (score <= 5.5) return img + '学习中.png" alt="学习中" class="mood-img">';
+    if (score <= 6.5) return img + '期待1.png" alt="期待" class="mood-img">';
+    if (score <= 7.5) return img + '撒娇.png" alt="撒娇" class="mood-img">';
+    if (score <= 8.5) return img + '开心2.png" alt="开心" class="mood-img">';
+    if (score <= 9.5) return img + '开心.png" alt="超开心" class="mood-img">';
+    return img + '十分开心.png" alt="十分开心" class="mood-img">';
   }
 
   function getScoreColor(score) {
@@ -210,7 +211,7 @@
   function updateMoodDisplay() {
     var score = parseFloat(moodSlider.value);
     scoreDisplay.textContent = score.toFixed(1);
-    moodEmoji.textContent = getMoodEmoji(score);
+    moodEmoji.innerHTML = getMoodEmoji(score);
     scoreDisplay.style.color = getScoreColor(score);
   }
 

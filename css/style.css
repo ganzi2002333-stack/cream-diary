@@ -283,9 +283,24 @@ button {
 }
 
 .mood-emoji {
-  font-size: 40px;
   margin-bottom: var(--spacing-lg);
   transition: transform 200ms ease;
+  text-align: center;
+}
+
+.mood-img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  image-rendering: auto;
+}
+
+/* 历史/搜索结果卡片中的小号表情 */
+.history-card-score .mood-img,
+.search-result-card .mood-img {
+  width: 36px;
+  height: 36px;
+  vertical-align: middle;
 }
 
 /* 滑动条 */
