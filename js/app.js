@@ -189,17 +189,10 @@
   const moodEmoji = document.getElementById('moodEmoji');
 
   function getMoodEmoji(score) {
-    var img = '<img src="assets/icons/';
-    if (score <= 1.5) return img + '难过.png" alt="难过" class="mood-img">';
-    if (score <= 2.5) return img + '累.png" alt="累" class="mood-img">';
-    if (score <= 3.5) return img + '生气.png" alt="生气" class="mood-img">';
-    if (score <= 4.5) return img + '电量耗尽.png" alt="电量耗尽" class="mood-img">';
-    if (score <= 5.5) return img + '学习中.png" alt="学习中" class="mood-img">';
-    if (score <= 6.5) return img + '期待1.png" alt="期待" class="mood-img">';
-    if (score <= 7.5) return img + '撒娇.png" alt="撒娇" class="mood-img">';
-    if (score <= 8.5) return img + '开心2.png" alt="开心" class="mood-img">';
-    if (score <= 9.5) return img + '开心.png" alt="超开心" class="mood-img">';
-    return img + '十分开心.png" alt="十分开心" class="mood-img">';
+    var level = Math.round(score);
+    if (level < 1) level = 1;
+    if (level > 10) level = 10;
+    return '<img src="assets/icons/1-' + level + '.png" alt="心情 ' + level + '" class="mood-img">';
   }
 
   function getScoreColor(score) {
