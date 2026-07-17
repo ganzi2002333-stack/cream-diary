@@ -33,7 +33,6 @@
     'panel-today': '🍰 今天的心情',
     'panel-history': '📅 历史记录',
     'panel-trends': '📊 情绪趋势',
-    'panel-cat': '🐱 猫伴',
     'panel-search': '🔍 搜索',
     'panel-settings': '⚙️ 设置'
   };
@@ -146,12 +145,6 @@
     }
     if (panelId === 'panel-trends') {
       refreshTrends();
-    }
-    if (panelId === 'panel-cat') {
-      // 通知 chat.js 面板已激活
-      if (window.onChatPanelActivated) {
-        window.onChatPanelActivated();
-      }
     }
     if (panelId === 'panel-search') {
       // 进入搜索页时触发一次搜索，展示全量结果
@@ -1212,7 +1205,7 @@
 
   // ---------- 初始化完成 ----------
   console.log('🍰 奶油日记初始化完成');
-  console.log('   ✅ 5个页面Panel就绪');
+  console.log('   ✅ 5个页面Panel就绪（猫伴已移除）');
   console.log('   ✅ 底部导航切换正常');
   console.log('   ✅ 情绪滑动条交互正常');
   console.log('   ✅ 15个预设标签已加载');

@@ -244,60 +244,6 @@
       </section>
 
       <!-- =============================================================== -->
-      <!-- Panel 4.5: 猫伴 - AI 聊天面板 -->
-      <!-- =============================================================== -->
-      <section class="panel" id="panel-cat">
-        <div class="panel-content" style="display:flex;flex-direction:column;height:100%;padding-bottom:0;">
-
-          <!-- 猫伴头部装饰 -->
-          <div class="cat-header-deco">
-            <img src="assets/icons/猫咪2.png" alt="猫猫" class="cat-header-img">
-          </div>
-
-          <!-- 会话选择器 -->
-          <div class="chat-session-header">
-            <select class="chat-session-select" id="chatSessionSelect">
-              <option value="">🐱 选择会话…</option>
-            </select>
-            <button class="btn-new-chat" id="btnNewChat" title="新建对话">＋</button>
-            <button class="btn-delete-chat" id="btnDeleteChat" title="删除会话">🗑️</button>
-          </div>
-
-          <!-- 消息搜索 -->
-          <div class="chat-search-box">
-            <span style="font-size:14px;">🔍</span>
-            <input type="text" class="chat-search-input" id="chatSearchInput"
-                   placeholder="在对话中搜索关键词…">
-            <span class="chat-search-clear" id="chatSearchClear">✕</span>
-          </div>
-
-          <!-- 消息列表 -->
-          <div class="chat-messages" id="chatMessages">
-            <!-- 空状态 -->
-            <div class="chat-empty" id="chatEmpty">
-              <div class="chat-empty-icon"><img src="assets/icons/猫咪1.png" alt="猫伴" class="chat-empty-cat-img"></div>
-              <div class="chat-empty-text">喵~ 我是你的AI猫伴</div>
-              <div class="chat-empty-hint">可以和我聊聊你的心情、今天的趣事，或者任何你想说的话~</div>
-              <div class="chat-empty-suggestions">
-                <span class="chat-suggestion-chip" data-text="我今天心情不太好，可以安慰我一下吗？">😔 我今天心情不太好…</span>
-                <span class="chat-suggestion-chip" data-text="帮我分析一下最近的日记，看看我的情绪趋势">📊 帮我分析日记情绪</span>
-                <span class="chat-suggestion-chip" data-text="讲一个关于小猫咪的有趣故事给我听">🐈 讲个猫咪故事</span>
-                <span class="chat-suggestion-chip" data-text="我最近总是很焦虑，有什么方法可以缓解？">💡 缓解焦虑的方法</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 输入栏 -->
-          <div class="chat-input-area">
-            <input type="text" class="chat-input" id="chatInput"
-                   placeholder="输入消息…" maxlength="2000">
-            <button class="btn-send" id="btnSend" disabled>▶</button>
-          </div>
-
-        </div>
-      </section>
-
-      <!-- =============================================================== -->
       <!-- Panel 5: 设置 - 设置页 -->
       <!-- =============================================================== -->
       <section class="panel" id="panel-settings">
@@ -344,63 +290,6 @@
             </div>
           </div>
 
-          <!-- AI 猫伴配置 -->
-          <div class="card settings-card">
-            <div class="settings-item">
-              <div class="settings-info">
-                <div class="settings-label">🐱 AI 猫伴</div>
-                <div class="settings-desc">配置 AI 聊天接口</div>
-              </div>
-              <label class="toggle-switch">
-                <input type="checkbox" id="aiChatToggle" checked>
-                <span class="toggle-slider"></span>
-              </label>
-            </div>
-            <div class="settings-item" id="aiProviderRow" style="flex-direction:column;align-items:stretch;">
-              <div class="settings-info" style="margin-bottom:8px;">
-                <div class="settings-label">API 提供商</div>
-                <div class="settings-desc">选择 AI 接口（OpenAI兼容即可）</div>
-              </div>
-              <select id="aiProvider" class="chat-session-select" style="width:100%;">
-                <option value="deepseek">DeepSeek（推荐）</option>
-                <option value="openai">OpenAI (GPT-4o-mini)</option>
-                <option value="custom">自定义兼容接口</option>
-              </select>
-            </div>
-            <div class="settings-item" id="aiEndpointRow" style="flex-direction:column;align-items:stretch;">
-              <div class="settings-info" style="margin-bottom:8px;">
-                <div class="settings-label">API 地址</div>
-                <div class="settings-desc">OpenAI 兼容的 API 端点</div>
-              </div>
-              <input type="text" class="api-input" id="aiEndpoint"
-                     placeholder="https://api.openai.com/v1/chat/completions">
-            </div>
-            <div class="settings-item" id="aiKeyRow" style="flex-direction:column;align-items:stretch;">
-              <div class="settings-info" style="margin-bottom:8px;">
-                <div class="settings-label">API Key</div>
-                <div class="settings-desc">你的 API 密钥（仅存本地）</div>
-              </div>
-              <input type="password" class="api-input" id="aiApiKey"
-                     placeholder="sk-…">
-            </div>
-            <div class="settings-item" id="aiModelRow" style="flex-direction:column;align-items:stretch;">
-              <div class="settings-info" style="margin-bottom:8px;">
-                <div class="settings-label">模型名称</div>
-                <div class="settings-desc">例如 gpt-4o-mini, deepseek-chat</div>
-              </div>
-              <input type="text" class="api-input" id="aiModel"
-                     placeholder="gpt-4o-mini">
-            </div>
-            <div class="settings-item" id="aiSystemPromptRow" style="flex-direction:column;align-items:stretch;">
-              <div class="settings-info" style="margin-bottom:8px;">
-                <div class="settings-label">系统提示词</div>
-                <div class="settings-desc">定义猫伴的性格和说话风格</div>
-              </div>
-              <textarea class="api-input" id="aiSystemPrompt" rows="3"
-                        style="resize:vertical;min-height:60px;"></textarea>
-            </div>
-          </div>
-
           <!-- 关于 -->
           <div class="card settings-card">
             <div class="settings-item">
@@ -433,10 +322,6 @@
         <button class="nav-item" data-panel="panel-trends">
           <span class="nav-icon"><img src="assets/icons/趋势.png" alt="趋势" class="nav-cat-icon"></span>
           <span class="nav-label">趋势</span>
-        </button>
-        <button class="nav-item" data-panel="panel-cat">
-          <span class="nav-icon"><img src="assets/icons/猫咪.png" alt="猫伴" class="nav-cat-icon"></span>
-          <span class="nav-label">猫伴</span>
         </button>
         <button class="nav-item" data-panel="panel-search">
           <span class="nav-icon">🔍</span>
@@ -475,9 +360,8 @@
   </script>
 
   <!-- ========== 项目 JS ========== -->
-  <script src="js/storage.js?v=2"></script>
-  <script src="js/app.js?v=2"></script>
-  <script src="js/chat.js?v=2"></script>
+  <script src="js/storage.js?v=3"></script>
+  <script src="js/app.js?v=3"></script>
 
 </body>
 </html>
