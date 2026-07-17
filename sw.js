@@ -3,7 +3,7 @@
 // v2.0: stale-while-revalidate 策略 — 自动更新
 // ============================================================
 
-const CACHE_NAME = 'cream-diary-v2.0.0';
+const CACHE_NAME = 'cream-diary-v2.1.0';
 const CACHE_URLS = [
   './',
   './index.html',

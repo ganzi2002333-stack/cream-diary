@@ -1100,8 +1100,8 @@
     if (Notification.permission !== 'granted') return;
     new Notification(title, {
       body: body,
-      icon: 'assets/icons/icon-192.png',
-      badge: 'assets/icons/icon-192.png',
+      icon: 'assets/icons/桌面图标.png',
+      badge: 'assets/icons/桌面图标.png',
       tag: 'cream-diary-reminder',
       renotify: false,
       requireInteraction: false

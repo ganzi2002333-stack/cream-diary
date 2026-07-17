@@ -282,7 +282,7 @@
       if (msg.role === 'user') {
         html += `
           <div class="chat-msg user">
-            <div class="chat-avatar">😺</div>
+            <div class="chat-avatar"><img src="assets/icons/猫咪2.png" alt="我" class="chat-avatar-img"></div>
             <div class="chat-bubble">
               <div class="chat-bubble-text">${content}</div>
               <div class="chat-time">${time}</div>
@@ -291,7 +291,7 @@
       } else {
         html += `
           <div class="chat-msg assistant">
-            <div class="chat-avatar">🐱</div>
+            <div class="chat-avatar"><img src="assets/icons/猫咪.png" alt="猫伴" class="chat-avatar-img"></div>
             <div class="chat-bubble">
               <div class="chat-bubble-text">${content}</div>
               <div class="chat-time">${time}</div>
@@ -304,7 +304,7 @@
     if (isStreaming && activeSessionId) {
       html += `
         <div class="chat-msg assistant chat-typing" id="streamingBubble">
-          <div class="chat-avatar">🐱</div>
+          <div class="chat-avatar"><img src="assets/icons/猫咪.png" alt="猫伴" class="chat-avatar-img"></div>
           <div class="chat-bubble">
             <span class="chat-typing-dot"></span>
             <span class="chat-typing-dot"></span>
@@ -319,7 +319,7 @@
     if (searchHighlight && messages.length === 0) {
       els.messages.innerHTML = `
         <div class="chat-empty">
-          <div class="chat-empty-icon">🔍</div>
+          <div class="chat-empty-icon"><img src="assets/icons/猫咪毛球.png" alt="找不到" class="chat-empty-cat-img"></div>
           <div class="chat-empty-text">没有找到匹配的消息</div>
           <div class="chat-empty-hint">试试其他关键词吧~</div>
         </div>`;

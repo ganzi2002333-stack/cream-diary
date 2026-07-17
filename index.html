@@ -9,6 +9,10 @@
   <meta name="description" content="奶油日记 - 用温柔的方式记录每一天的情绪">
   <title>🍰 奶油日记</title>
 
+  <!-- 桌面图标 Favicon -->
+  <link rel="icon" type="image/png" href="assets/icons/桌面图标.png">
+  <link rel="shortcut icon" type="image/png" href="assets/icons/桌面图标.png">
+
   <!-- 外部依赖 -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
 
@@ -18,8 +22,8 @@
   <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
 
-  <!-- Apple Touch Icon (临时占位，后续替换为真实图标) -->
-  <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+  <!-- Apple Touch Icon -->
+  <link rel="apple-touch-icon" href="assets/icons/桌面图标.png">
 </head>
 <body>
 
@@ -29,6 +33,7 @@
     <!-- ========== 顶部标题栏 ========== -->
     <header class="app-header" id="appHeader">
       <h1 class="page-title" id="pageTitle">🍰 今天的心情</h1>
+      <img src="assets/icons/32收猫咪.png" alt="" class="header-cat-deco" aria-hidden="true">
     </header>
 
     <!-- ========== 主内容区 ========== -->
@@ -244,6 +249,11 @@
       <section class="panel" id="panel-cat">
         <div class="panel-content" style="display:flex;flex-direction:column;height:100%;padding-bottom:0;">
 
+          <!-- 猫伴头部装饰 -->
+          <div class="cat-header-deco">
+            <img src="assets/icons/猫咪2.png" alt="猫猫" class="cat-header-img">
+          </div>
+
           <!-- 会话选择器 -->
           <div class="chat-session-header">
             <select class="chat-session-select" id="chatSessionSelect">
@@ -265,7 +275,7 @@
           <div class="chat-messages" id="chatMessages">
             <!-- 空状态 -->
             <div class="chat-empty" id="chatEmpty">
-              <div class="chat-empty-icon">🐱</div>
+              <div class="chat-empty-icon"><img src="assets/icons/猫咪1.png" alt="猫伴" class="chat-empty-cat-img"></div>
               <div class="chat-empty-text">喵~ 我是你的AI猫伴</div>
               <div class="chat-empty-hint">可以和我聊聊你的心情、今天的趣事，或者任何你想说的话~</div>
               <div class="chat-empty-suggestions">
@@ -399,6 +409,9 @@
                 <div class="settings-desc">版本 v2.0 · 猫猫风格 · 用心记录每一天</div>
               </div>
             </div>
+            <div class="settings-cat-deco">
+              <img src="assets/icons/猫咪朋友圈.png" alt="猫咪朋友圈" class="settings-cat-deco-img">
+            </div>
           </div>
 
           <div class="bottom-spacer"></div>
@@ -422,7 +435,7 @@
           <span class="nav-label">趋势</span>
         </button>
         <button class="nav-item" data-panel="panel-cat">
-          <span class="nav-icon">🐱</span>
+          <span class="nav-icon"><img src="assets/icons/猫咪.png" alt="猫伴" class="nav-cat-icon"></span>
           <span class="nav-label">猫伴</span>
         </button>
         <button class="nav-item" data-panel="panel-search">
