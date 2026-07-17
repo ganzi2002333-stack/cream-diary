@@ -860,6 +860,23 @@ button {
 .history-btn-delete:active { background: #FFF0F0; color: #D4687C; }
 
 /* ---------- Trends ---------- */
+
+/* 趋势页切换按钮图标 */
+.toggle-icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 2px;
+}
+
+/* 趋势空状态图片 */
+.trends-empty-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  opacity: 0.7;
+}
 .chart-toggle {
   display: flex;
   gap: var(--spacing-md);
