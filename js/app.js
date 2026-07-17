@@ -2,7 +2,6 @@
 // 奶油日记 · 主控逻辑
 // Phase 2: 页面切换 + UI 交互 + 预设标签渲染
 // Phase 3: IndexedDB 数据层集成
-// Phase 4: 历史记录列表渲染
 // Phase 5: 搜索筛选（关键词 + 日期范围 + 分数范围 + 标签过滤）
 // ============================================================
 
@@ -31,7 +30,6 @@
   // ---------- 页面标题映射 ----------
   const PAGE_TITLES = {
     'panel-today': '🍰 今天的心情',
-    'panel-history': '📅 历史记录',
     'panel-trends': '📊 情绪趋势',
     'panel-search': '🔍 搜索',
     'panel-settings': '⚙️ 设置'
@@ -39,9 +37,6 @@
 
   // ---------- 选中标签集合（今天页） ----------
   let selectedTags = new Set();
-
-  // ---------- 当前历史筛选时段 ----------
-  let historyPeriod = 'all'; // 'all' | 'week' | 'month'
 
   // ---------- 趋势图维度 ----------
   let currentTrendView = 'week'; // 'week' | 'month'
@@ -66,9 +61,6 @@
   const modalTitle = document.getElementById('modalTitle');
   const modalBody = document.getElementById('modalBody');
   const modalActions = document.getElementById('modalActions');
-  const historyList = document.getElementById('historyList');
-  const historyEmpty = document.getElementById('historyEmpty');
-
   // ---------- Toast 系统 ----------
   let toastTimer = null;
 
@@ -140,9 +132,6 @@
   }
 
   function onPanelSwitched(panelId) {
-    if (panelId === 'panel-history') {
-      refreshHistoryList();
-    }
     if (panelId === 'panel-trends') {
       refreshTrends();
     }
@@ -365,7 +354,6 @@
           moodSlider.value = 5.0;
           updateMoodDisplay();
           showToast('💛 已记录今日心情');
-          refreshHistoryListIfActive();
         } catch (e) { console.error('保存失败:', e); showToast('❌ 保存失败，请重试'); }
       } else {
         console.log('📝 保存模拟（storage 未加载）:', record);
@@ -375,17 +363,8 @@
   }
 
   // ===========================
-  // Phase 4: 历史记录渲染
+  // 历史记录渲染（已移除面板，保留工具函数供搜索使用）
   // ===========================
-
-  document.querySelectorAll('.filter-chip').forEach(function (chip) {
-    chip.addEventListener('click', function () {
-      document.querySelectorAll('.filter-chip').forEach(function (c) { c.classList.remove('active'); });
-      this.classList.add('active');
-      historyPeriod = this.dataset.period || 'all';
-      refreshHistoryList();
-    });
-  });
 
   function formatHistoryDate(dateStr) {
     var d = new Date(dateStr + 'T00:00:00');
@@ -414,151 +393,6 @@
     var div = document.createElement('div');
     div.textContent = str;
     return div.innerHTML;
-  }
-
-  function refreshHistoryListIfActive() {
-    var activePanel = document.querySelector('.panel.active');
-    if (activePanel && activePanel.id === 'panel-history') {
-      refreshHistoryList();
-    }
-  }
-
-  async function refreshHistoryList() {
-    if (!window.CreamStorage) { console.warn('CreamStorage 未加载，跳过历史渲染'); return; }
-    if (!historyList) return;
-
-    try {
-      var records = await window.CreamStorage.getAllRecords();
-      if (historyPeriod === 'week') {
-        var sevenDaysAgo = new Date(); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-        records = records.filter(function (r) { return new Date(r.date + 'T00:00:00') >= sevenDaysAgo; });
-      } else if (historyPeriod === 'month') {
-        var thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-        records = records.filter(function (r) { return new Date(r.date + 'T00:00:00') >= thirtyDaysAgo; });
-      }
-      records.sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
-
-      if (!records || records.length === 0) {
-        historyList.innerHTML = '';
-        if (historyEmpty) { historyEmpty.style.display = ''; historyList.appendChild(historyEmpty); }
-        else { historyList.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-text">还没有情绪记录哦~</div></div>'; }
-        return;
-      }
-      if (historyEmpty) historyEmpty.style.display = 'none';
-
-      historyList.innerHTML = '';
-      records.forEach(function (record) {
-        historyList.appendChild(createHistoryCard(record));
-      });
-    } catch (e) { console.error('刷新历史列表失败:', e); }
-  }
-
-  function createHistoryCard(record) {
-    var card = document.createElement('div');
-    card.className = 'history-card';
-    card.dataset.recordId = record.id;
-    card.dataset.date = record.date;
-    var score = record.score || 5;
-    var emoji = getMoodEmoji(score);
-    var color = getScoreColor(score);
-
-    var tagsHTML = '';
-    if (record.tags && record.tags.length > 0) {
-      tagsHTML = '<div class="history-card-tags">' +
-        record.tags.map(function (tid) {
-          var info = findTagInfo(tid);
-          return '<span class="history-tag-chip">' + info.icon + ' ' + info.label + '</span>';
-        }).join('') + '</div>';
-    }
-
-    var qaHTML = '';
-    if (record.a1 || record.a2 || record.a3) {
-      qaHTML = '<div class="history-card-qa">';
-      if (record.a1) qaHTML += '<div class="history-qa-block"><span class="qa-q">Q:</span><span class="qa-a">' + escapeHTML(record.a1) + '</span></div>';
-      if (record.a2) qaHTML += '<div class="history-qa-block"><span class="qa-q">Q:</span><span class="qa-a">' + escapeHTML(record.a2) + '</span></div>';
-      if (record.a3) qaHTML += '<div class="history-qa-block"><span class="qa-q">Q:</span><span class="qa-a">' + escapeHTML(record.a3) + '</span></div>';
-      qaHTML += '</div>';
-    }
-
-    card.innerHTML =
-      '<div class="history-card-top">' +
-        '<div class="history-card-date">' +
-          '<span class="day-icon">' + getDayIcon(record.date) + '</span>' + formatHistoryDate(record.date) +
-        '</div>' +
-        '<div class="history-card-score" style="color: ' + color + '">' +
-          '<span class="score-num">' + score.toFixed(1) + '</span>' +
-          '<span class="score-emoji">' + emoji + '</span>' +
-        '</div>' +
-      '</div>' + tagsHTML + qaHTML +
-      '<div class="history-card-actions">' +
-        '<button class="history-btn-edit" data-action="edit" data-id="' + record.id + '">✏️ 编辑</button>' +
-        '<button class="history-btn-delete" data-action="delete" data-id="' + record.id + '">🗑️ 删除</button>' +
-      '</div>';
-
-    var deleteBtn = card.querySelector('.history-btn-delete');
-    if (deleteBtn) {
-      deleteBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        deleteHistoryRecord(record.id, record.date);
-      });
-    }
-    var editBtn = card.querySelector('.history-btn-edit');
-    if (editBtn) {
-      editBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        editHistoryRecord(record);
-      });
-    }
-    return card;
-  }
-
-  async function deleteHistoryRecord(recordId, dateStr) {
-    var confirmed = await showModal(
-      '⚠️ 确认删除',
-      '<p class="delete-confirm-text">确定要删除 <strong>' + dateStr + '</strong> 的记录吗？<br>此操作不可恢复。</p>',
-      [
-        { label: '取消', isPrimary: false, value: false },
-        { label: '确认删除', isPrimary: true, value: true }
-      ]
-    );
-    if (!confirmed) return;
-    if (window.CreamStorage) {
-      try { await window.CreamStorage.deleteRecord(recordId); showToast('🗑️ 记录已删除'); refreshHistoryList(); }
-      catch (e) { console.error('删除失败:', e); showToast('❌ 删除失败'); }
-    }
-  }
-
-  async function editHistoryRecord(record) {
-    var confirmed = await showModal(
-      '✏️ 编辑记录',
-      '<p>将 <strong>' + record.date + '</strong> 的记录加载到"今天"页面进行编辑？</p>',
-      [
-        { label: '取消', isPrimary: false, value: false },
-        { label: '加载', isPrimary: true, value: true }
-      ]
-    );
-    if (!confirmed) return;
-
-    if (moodSlider) { moodSlider.value = record.score || 5; updateMoodDisplay(); }
-    selectedTags.clear();
-    if (record.tags && record.tags.length > 0) {
-      record.tags.forEach(function (tid) { selectedTags.add(tid); });
-    }
-    renderTags('tagsContainer', PRESET_TAGS, selectedTags, handleTagClick);
-
-    var q1 = document.getElementById('q1Input');
-    if (q1) { q1.value = record.a1 || ''; q1.dispatchEvent(new Event('input')); }
-    var q2 = document.getElementById('q2Input');
-    if (q2) { q2.value = record.a2 || ''; q2.dispatchEvent(new Event('input')); }
-    var q3 = document.getElementById('q3Input');
-    if (q3) { q3.value = record.a3 || ''; q3.dispatchEvent(new Event('input')); }
-
-    if (window.CreamStorage) {
-      try { await window.CreamStorage.deleteRecord(record.id); }
-      catch (e) { console.warn('删除旧记录失败:', e); }
-    }
-    switchPanel('panel-today');
-    showToast('✏️ 已加载，修改后点击保存即可');
   }
 
   // ===========================
@@ -765,26 +599,8 @@
           '<span class="score-num">' + score.toFixed(1) + '</span>' +
           '<span class="score-emoji">' + emoji + '</span>' +
         '</div>' +
-      '</div>' + tagsHTML + qaHTML +
-      '<div class="history-card-actions">' +
-        '<button class="history-btn-edit" data-action="edit" data-id="' + record.id + '">✏️ 编辑</button>' +
-        '<button class="history-btn-delete" data-action="delete" data-id="' + record.id + '">🗑️ 删除</button>' +
-      '</div>';
+      '</div>' + tagsHTML + qaHTML;
 
-    var deleteBtn = card.querySelector('.history-btn-delete');
-    if (deleteBtn) {
-      deleteBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        deleteHistoryRecord(record.id, record.date);
-      });
-    }
-    var editBtn = card.querySelector('.history-btn-edit');
-    if (editBtn) {
-      editBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        editHistoryRecord(record);
-      });
-    }
     return card;
   }
 
@@ -1023,7 +839,6 @@
         if (window.CreamStorage) {
           var result = await window.CreamStorage.importData(text);
           showToast('📥 已导入 ' + result.records + ' 条记录');
-          refreshHistoryListIfActive();
         } else { showToast('❌ 数据层未就绪'); }
       } catch (e) { console.error('导入失败:', e); showToast('❌ 导入失败: ' + e.message); }
       importFileInput.value = '';
@@ -1211,7 +1026,6 @@
   console.log('   ✅ 15个预设标签已加载');
   console.log('   ✅ Toast & Modal 系统就绪');
   console.log('   ✅ IndexedDB 数据层已接入（保存/导出/导入可用）');
-  console.log('   ✅ Phase 4: 历史记录列表渲染就绪');
   console.log('   ✅ Phase 5: 搜索筛选引擎就绪（关键词+日期+分数+标签+高亮）');
   console.log('   ✅ Phase 6: 情绪趋势图表就绪（Chart.js折线图+统计卡片）');
   console.log('   ✅ Phase 7: 每日提醒通知就绪（Web Notification + 60s轮询调度）');
