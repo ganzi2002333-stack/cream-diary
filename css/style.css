@@ -317,7 +317,7 @@ button {
   width: 110px;
   height: 110px;
   object-fit: contain;
-  image-rendering: auto;
+  image-rendering: crisp-edges;
   /* 猫猫轻微浮动动画 */
   animation: moodCatFloat 3s ease-in-out infinite;
 }
@@ -334,6 +334,7 @@ button {
   height: 40px;
   vertical-align: middle;
   animation: none;
+  image-rendering: crisp-edges;
 }
 
 /* 滑动条 */
